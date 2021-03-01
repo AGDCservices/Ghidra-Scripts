@@ -20,7 +20,7 @@ Adds a single space as a repeatable comment to all functions within the current 
 Currently, there is no way to turn this option off.  A work around is to replace the repeatable comment with a single space so that you don't see any comment by default, and the code block is not expanded out to 
 it's maximum size because of the long function prototype comment. See script header for more usage details.
 ## Utils.py
-A number of commonly used convenience functions to aid in rapid scripting, e.g. Get_Operand_As_Immediate_Value, Get_Next_Target_Instruction, Get_Bytes, etc.  Need to copy them into target script to run, Ghidra won't let you import the entire module into a script and use the functions that way. See script header for more usage details.
+A number of commonly used convenience functions to aid in rapid scripting, e.g. Get_Operand_As_Immediate_Value, Get_Next_Target_Instruction, Get_Bytes, etc. See script header for more usage details.
 ## Label_Dynamically_Resolved_Iat_Entries.py
 Script to aid in reverse engineering files that dynamically resolve imports. Script will search program for all dynamically resolved imports and label them with the appropriate API name pulled from a provided labeled IAT dump file.  Only resolved imports stored in global variables will be identified. This script will not label every resolved global variable, but only those that are used inside a call instruction.
 
