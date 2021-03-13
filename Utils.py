@@ -5,7 +5,8 @@ Utility module of common helper functions used
 in building Ghidra scripts
 
 Contained function prototypes below:
-    Get_Bytes(targetEa, nLen)
+    Get_Bytes_List(targetEa, nLen)
+    Get_Bytes_String(targetEa, nLen)
     Get_Ascii_String(targetEa)
     Get_Call_Xrefs_To(targetEa)
     Get_Prev_Target_Instruction(curInstr, mnem, N, MAX_INSTRUCTIONS = 9999)
@@ -15,7 +16,7 @@ Contained function prototypes below:
 
 '''
 
-def Get_Bytes(targetEa, nLen):
+def Get_Bytes_List(targetEa, nLen):
     '''
     gets the bytes from memory, treating as unsigned bytes
     ghidra treats read bytes as signed which is not what
@@ -26,6 +27,8 @@ def Get_Bytes(targetEa, nLen):
     displayed as a negative value will fail when compared to
     the two's complement hex (-2 != 0xfe).  If you're using
     the byte to patch the program, it may work ok.
+    
+    returns result as a list
     '''
 
     signedList = list(getBytes(targetEa, nLen))
@@ -38,6 +41,33 @@ def Get_Bytes(targetEa, nLen):
         unsignedList.append(uByte)
 
     return unsignedList
+
+def Get_Bytes_String(targetEa, nLen):
+    '''
+    gets the bytes from memory, treating as unsigned bytes
+    ghidra treats read bytes as signed which is not what
+    you normally want when reading memory, e.g. if you call
+    getBytes on a byte 0xfe, you won't get 0xfe, you'll get -2
+    this may not be an issue depending on what operation you
+    are performing, or it may, e.g. reading a byte that is
+    displayed as a negative value will fail when compared to
+    the two's complement hex (-2 != 0xfe).  If you're using
+    the byte to patch the program, it may work ok.
+    
+    returns result as a string
+    '''
+
+    signedList = list(getBytes(targetEa, nLen))
+    unsignedList = []
+    for curByte in signedList:
+        if curByte < 0:
+            uByte = (0xff - abs(curByte) + 1)
+        else:
+            uByte= curByte
+        unsignedList.append(chr(uByte))
+
+    return ''.join(unsignedList)
+
 
 def Get_Ascii_String(targetEa):
     '''
