@@ -6,9 +6,18 @@ Add these scripts to your Ghidra scripts directory:
 2. Select the Window / Script Manager menu
 3. Click the "Script Directories" icon in the upper right toolbar
 4. Add the directory where your scripts are located via the green plus sign
+5. All scripts will show up under the AGDCservices folder
 ## Clear_All_Instruction_Colors.py
 Removes all highlight colors from current program.  Applied highlighting colors are saved with the ghidra file.
 This script can be used to remove the colors prior to exporting and sharing the ghidra database so that the highlight colors don't clash with different color schemes used by coworkers. See script header for more usage details.
+## Preview_Function_Capabilities.py
+This script will name all unidentified functions with a nomenclature that provides a preview of important capabilities included within the function and all child functions.
+
+The script includes a list of hardcoded important API calls. The script will locate all calls contained in the unidentifed function and it's children functions. For any of the calls which match the hardcoded API call list, a shorthand name will be applied to indicate which category of important call is contained within the function.
+
+The naming nomenclature is based on capability and does not identify specific API's. By keeping the syntax short and just for capability, you can get a preview of all the important capabilities within a function without having the name get enormous. See script header for more details.
+
+For a video demonstration of this script, view the video "Ghidra Script To Name Function From Capabilities" on the AGDC Services channel of youtube, https://youtu.be/s5weitGaKLw
 ## Highlight_Target_Instructions.py
 Script to search all instructions in current program looking for target instructions of interest.  When found,
 a defined highlighting color will be applied to make it easy to identify target instructions.  Target instructions are things like call instructions, potential crypto operations, pointer instructions, etc.  Highlighting instructions of interest decrease the chance of missing important instructions when skimming malware code. See script header for more usage details.
