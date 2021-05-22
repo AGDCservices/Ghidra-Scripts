@@ -13,6 +13,7 @@ Contained function prototypes below:
     Get_Next_Target_Instruction(curInstr, mnem, N, MAX_INSTRUCTIONS = 9999)
     Get_Operand_As_Address(targetInstr, operandIndex)
     Get_Operand_As_Immediate_Value(targetInstr, operandIndex)
+    Get_Operand_As_String(targetInstr, operandIndex)
 
 '''
 
@@ -27,7 +28,7 @@ def Get_Bytes_List(targetEa, nLen):
     displayed as a negative value will fail when compared to
     the two's complement hex (-2 != 0xfe).  If you're using
     the byte to patch the program, it may work ok.
-    
+
     returns result as a list
     '''
 
@@ -53,7 +54,7 @@ def Get_Bytes_String(targetEa, nLen):
     displayed as a negative value will fail when compared to
     the two's complement hex (-2 != 0xfe).  If you're using
     the byte to patch the program, it may work ok.
-    
+
     returns result as a string
     '''
 
@@ -74,7 +75,7 @@ def Get_Ascii_String(targetEa):
     returns the null terminated ascii string starting
     at targetEa.  Returns a string object and does not
     include the terminating null character
-    
+
     targetEa must be an address object
     '''
 
@@ -186,7 +187,7 @@ def Get_Operand_As_Address(targetInstr, operandIndex):
     '''
     returns the value for the operandIndex operand of the
     target instruction treated as an address.  if the
-    target operand is can not be treated as an address,
+    target operand can not be treated as an address,
     returns None.  operandIndex starts at 0
 
     If this is called on jumps or calls, the final
@@ -217,7 +218,6 @@ def Get_Operand_As_Address(targetInstr, operandIndex):
 
 def Get_Operand_As_Immediate_Value(targetInstr, operandIndex):
     '''
-    returns the value for the operandIndex operand of the target instruction
     returns the value for the operandIndex operand of the target instruction
     if the target operand is not an immediate value, the function will attempt
     to find where the variable was previously set.  It will ONLY search within
@@ -279,14 +279,18 @@ def Get_Operand_As_Immediate_Value(targetInstr, operandIndex):
                     if curInstr.getOperandType(1) == OP_TYPE_IMMEDIATE:
                         targetValue = curInstr.getOpObjects(1)[0].getValue()
                     elif curInstr.getOperandType(1) == OP_TYPE_NO_CALL_REG:
-                        targetValue = Get_Operand_Immediate_Value(curInstr, 1)
+                        targetValue = Get_Operand_As_Immediate_Value(curInstr, 1)
                     break
             elif (curMnem == 'xor'):
                 operand1 = curInstr.getOpObjects(0)[0]
                 operand2 = curInstr.getOpObjects(1)[0]
-                if (operand1.getName().lower() == regName) and (operand2.getName().lower() == regName):
-                    targetValue = 0
-                    break
+                op1Type = curInstr.getOperandType(0)
+                op2Type = curInstr.getOperandType(1)
+
+                if (op1Type == OP_TYPE_NO_CALL_REG) and (op2Type == OP_TYPE_NO_CALL_REG):
+                    if (operand1.getName().lower() == regName) and (operand2.getName().lower() == regName):
+                        targetValue = 0
+                        break
             elif (curMnem == 'pop') and (curInstr.getOperandType(0) == OP_TYPE_NO_CALL_REG):
                 if curInstr.getOpObjects(0)[0].getName().lower() == regName:
                     # find previous push
@@ -332,6 +336,30 @@ def Get_Operand_As_Immediate_Value(targetInstr, operandIndex):
 
 
     return targetValue
+
+def Get_Operand_As_String(targetInstr, operandIndex):
+    '''
+    returns the value for the operandIndex operand of the
+    target instruction treated as a string.
+    operandIndex starts at 0
+
+    If this is called on jumps or calls, the final
+    address jumped to / called will be returned
+
+    '''
+
+    # error check
+    if operandIndex >= targetInstr.getNumOperands():
+        print('[*] Error in Get_Operand_As_String.  operandIndex is too large at {:s}'.format(targetInstr.getAddress().toString()))
+        return None
+    elif targetInstr.getNumOperands() == 0:
+        return None
+
+
+    operand = targetInstr.getOpObjects(operandIndex)[0]
+
+    return operand.toString()
+
 
 
 
