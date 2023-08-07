@@ -8,6 +8,7 @@ Contained function prototypes below:
     Get_Bytes_List(targetEa, nLen)
     Get_Bytes_String(targetEa, nLen)
     Get_Ascii_String(targetEa)
+    Set_Bytes_String(targetEa, patchStr)
     Get_Call_Xrefs_To(targetEa)
     Get_Prev_Target_Instruction(curInstr, mnem, N, MAX_INSTRUCTIONS = 9999)
     Get_Next_Target_Instruction(curInstr, mnem, N, MAX_INSTRUCTIONS = 9999)
@@ -88,6 +89,17 @@ def Get_Ascii_String(targetEa):
         i += 1
 
     return result
+
+def Set_Bytes_String(targetEa, patchStr):
+    '''
+    writes the patchStr to targetEa
+    does in a loop with setByte instead of setBytes
+    so avoid having to deal with bytearray in jython
+    '''
+    
+    for i, v in enumerate(patchStr):
+        setByte(targetEa.add(i), ord(v))
+        
 
 def Get_Call_Xrefs_To(targetEa):
     '''
